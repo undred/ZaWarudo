@@ -1,63 +1,98 @@
 <template>
- 
-
   <div id="app">
     <l-map :zoom="zoom" :center="center">
       <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
-      <l-marker :lat-lng="marker"></l-marker>
+      <l-marker
+        v-for="marker in events"
+        :key="marker.id"
+        :visible="marker.visible"
+        :draggable="marker.draggable"
+        :lat-lng.sync="marker.position"
+        :icon="marker.icon"
+        @click="alert(marker)"
+      >
+        <l-popup :content="marker.tooltip" />
+        <l-tooltip :content="marker.tooltip" />
+      </l-marker>
     </l-map>
-     <!--  <nav class="main-nav"> -->
-      
-      <Burger></Burger>
-   <!--  </nav> -->
+    <modal @cancel="modalOpen=false"  @ok="addMarker(eventTitle, eventTag, eventDescription); modalOpen=false" v-if="modalOpen">
+      <template v-slot:header>
+        <h3>Add Event</h3>
+      </template>
+      Title:<br> <input v-model="eventTitle"><br>
+      Tag:<br> <input v-model="eventTag"><br>
+      Description:<br> <input v-model="eventDescription"><br>
+    </modal>
+    <!--  <nav class="main-nav"> -->
+
+    <Burger></Burger>
+    <!--  </nav> -->
 
     <Sidebar>
-      <ul class="sidebar-panel-nav">S
+      <ul class="sidebar-panel-nav">
         <li>
-          <a href="#home">Home</a>
+          <a href="#home" @click="addMarker">Create Event</a>
         </li>
         <li>
-          <a href="#about">About</a>
+          <a href="#about" @click="modalOpen=true">About</a>
         </li>
         <li>
           <a href="#contact">Contact</a>
         </li>
       </ul>
     </Sidebar>
-  </div> 
+  </div>
 </template>
 
 <script>
- import Burger from "./components/Menu/Burger";
-import Sidebar from "./components/Menu/Sidebar"; 
+import Burger from "./components/Menu/Burger";
+import Sidebar from "./components/Menu/Sidebar";
+import Modal from "./components/Modal.vue"
 import { latLng } from "leaflet";
 import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
 
 export default {
   name: "app",
-  components: { LMap, LTileLayer, LMarker, Burger, Sidebar },
+  components: { LMap, LTileLayer, LMarker, Burger, Sidebar, Modal },
   data() {
     return {
-      zoom:13,
-      center: latLng(47.413220, -1.219482),
+      zoom:40,
+      center: latLng(38.73743, -9.3032147),
       url:'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
       attribution:'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      marker: latLng(47.413220, -1.219482),
+      events : [],
+      modalOpen: false,
+      eventTitle: "",
+      eventTag: "",
+      eventDescription: "",
     }
-  }
+  },
+  methods: {
+    alert(msg) {
+      alert(msg);
+    },
+    addMarker(eventTitle, eventTag, eventDescription) {
+      const newMarker = {
+        position: { lat: 38.73743, lng: -9.3032147},
+        draggable: true,
+        visible: true,
+        tooltip: eventTitle,
+      };
+      this.events.push(newMarker);
+    },
+    editMarker() {
+      this.events.push(newMarker);
+    }
+}
 }
 </script>
 <style>
-
-html, body, #app {
+html,
+body,
+#app {
   height: 100%;
   margin: 0;
 }
-
-/* html {
-  height: 100%;
-  overflow: hidden;
-}*/
 
 .logo {
   align-self: center;
@@ -82,5 +117,6 @@ ul.sidebar-panel-nav > li > a {
   font-size: 1.5rem;
   display: block;
   padding-bottom: 0.5em;
-} 
+}
+
 </style>

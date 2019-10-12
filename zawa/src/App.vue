@@ -1,12 +1,18 @@
 <template>
+ 
+
   <div id="app">
-    <nav class="main-nav">
-      <div class="logo">my.company</div>
+    <l-map :zoom="zoom" :center="center">
+      <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+      <l-marker :lat-lng="marker"></l-marker>
+    </l-map>
+     <!--  <nav class="main-nav"> -->
+      
       <Burger></Burger>
-    </nav>
+   <!--  </nav> -->
 
     <Sidebar>
-      <ul class="sidebar-panel-nav">
+      <ul class="sidebar-panel-nav">S
         <li>
           <a href="#home">Home</a>
         </li>
@@ -18,41 +24,40 @@
         </li>
       </ul>
     </Sidebar>
-  </div>
+  </div> 
 </template>
 
 <script>
-import Burger from './components/Menu/Burger'
-import Sidebar from './components/Menu/Sidebar'
+ import Burger from "./components/Menu/Burger";
+import Sidebar from "./components/Menu/Sidebar"; 
+import { latLng } from "leaflet";
+import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
 
 export default {
-  name: 'app',
-  components: {
-    Burger,
-    Sidebar
+  name: "app",
+  components: { LMap, LTileLayer, LMarker, Burger, Sidebar },
+  data() {
+    return {
+      zoom:13,
+      center: latLng(47.413220, -1.219482),
+      url:'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+      attribution:'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      marker: latLng(47.413220, -1.219482),
+    }
   }
 }
 </script>
 <style>
-html {
+
+html, body, #app {
   height: 100%;
-  overflow: hidden;
+  margin: 0;
 }
 
-body {
-  border: 0;
-  margin: 0;
-  padding: 0;
-  font-family: "Lato";
+/* html {
   height: 100%;
-  background: rgb(101, 31, 87);
-  background: linear-gradient(
-    45deg,
-    rgba(101, 31, 87, 1) 0%,
-    rgba(225, 113, 87, 1) 48%,
-    rgba(249, 248, 113, 1) 100%
-  );
-}
+  overflow: hidden;
+}*/
 
 .logo {
   align-self: center;
@@ -77,5 +82,5 @@ ul.sidebar-panel-nav > li > a {
   font-size: 1.5rem;
   display: block;
   padding-bottom: 0.5em;
-}
+} 
 </style>

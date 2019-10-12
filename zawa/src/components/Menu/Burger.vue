@@ -44,11 +44,13 @@
     }
 
     .burger-button {
-        position: relative;
+        position: absolute;
+        bottom: 5px;
+        left: 5px;
         height: 30px;
         width: 32px;
         display: block;
-        z-index: 999;
+        z-index: 1000;
         border: 0;
         border-radius: 0;
         background-color: transparent;

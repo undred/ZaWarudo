@@ -1,32 +1,34 @@
 <template>
   <div id="app">
-    <l-map :zoom="zoom" :center="center">
+    <l-map :zoom="zoom" :center="center" @update:center="centerUpdate">
       <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
+      <l-control class="zawa-branding">
+	<img src="@/assets/logo.svg"/><br>
+      </l-control>
       <l-marker
         
         v-for="marker in events"
         :key="marker.id"
         :visible="marker.visible"
-        :draggable="marker.draggable"
+        :draggable="marker.isNew"
         :lat-lng.sync="marker.position"
         :icon="marker.icon"
-        @click="alert(marker.title, marker.desc)"
       >
         <l-popup>
           <div @click="innerClick">
-            
+            <h2>{{ marker.title }}</h2>
+	    Tags: {{ marker.tag }}<br>
+	    Description: <span style="white-space: pre-line;"> {{marker.desc}} </span>
           </div>
         </l-popup>
         <l-tooltip :content="marker.tooltip" />
       </l-marker>
     </l-map>
-    <modal @cancel="modalOpen=false"  @ok="addMarker(eventTitle, eventTag, eventDescription); modalOpen=false" v-if="modalOpen">
+    <modal @cancel="modalOpen=false"  @ok="addMarker(newEvent); newEvent={}; modalOpen=false" v-if="modalOpen">
       <template v-slot:header>
         <h3>Create Event</h3>
       </template>
-      Title:<br> <input v-model="eventTitle"><br>
-      Tag:<br> <input v-model="eventTag"><br>
-      Description:<br> <input v-model="eventDescription"><br>
+      <EventForm v-model:event="newEvent"></EventForm>
     </modal>
     <!--  <nav class="main-nav"> -->
 
@@ -52,13 +54,14 @@
 <script>
 import Burger from "./components/Menu/Burger";
 import Sidebar from "./components/Menu/Sidebar";
-import Modal from "./components/Modal.vue"
+import Modal from "./components/Modal.vue";
+import EventForm from "./components/EventForm.vue";
 import { latLng } from "leaflet";
-import { LMap, LTileLayer, LMarker, LPopup} from "vue2-leaflet";
+import { LMap, LTileLayer, LMarker, LPopup, LControl} from "vue2-leaflet";
 
 export default {
   name: "app",
-  components: { LMap, LTileLayer, LMarker, LPopup, Burger, Sidebar, Modal},
+  components: { LMap, LTileLayer, LMarker, LPopup, LControl, Burger, Sidebar, Modal, EventForm},
   data() {
     return {
       zoom:40,
@@ -67,24 +70,27 @@ export default {
       attribution:'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       events : [],
       modalOpen: false,
-      eventTitle: "",
-      eventTag: "",
-      eventDescription: ""
+      newEvent: {title: "", tag:"", desc:""},
+
     }
   },
   methods: {
     alert(title, desc) {
       alert(title + "\n" + desc);
     },
-    addMarker(eventTitle, eventTag, eventDescription) {
+    addMarker(newEvent) {
       const newMarker = {
-        position: { lat: 38.73743, lng: -9.3032147},
-        draggable: true,
+        position: this.center,
         visible: true,
-        title: eventTitle,
-        desc: eventDescription,
-        tag: eventTag
+        isNew: true,
+        title: newEvent.title,
+        desc: newEvent.desc,
+        tag: newEvent.tag
       };
+	for(var marker of this.events) {
+	    marker.isNew = false;
+	}
+
       this.events.push(newMarker);
     },
     editMarker() {
@@ -92,7 +98,10 @@ export default {
     },
     innerClick() {
       alert("Click!");
-    }
+    },
+      centerUpdate(center) {
+	  this.center = center;
+      }
 }
 }
 </script>
@@ -102,6 +111,7 @@ body,
 #app {
   height: 100%;
   margin: 0;
+  font-family: "Lato";
 }
 
 .logo {
@@ -126,7 +136,43 @@ ul.sidebar-panel-nav > li > a {
   text-decoration: none;
   font-size: 1.5rem;
   display: block;
-  padding-bottom: 0.5em;
+  padding: 0.7em;
+  border-radius: 0.5em;
+  margin-bottom: 1em;
+  background:  #130f90;
 }
 
+.zawa-branding > img {
+    width: 5em;
+    height: 5em;
+    opacity: 0.8;
+    animation-name: flip;
+    animation-duration: 2s;
+    animation-iteration-count: 1;
+    animation-timing-function: linear;
+
+}
+
+.zawa-branding.connecting > img {
+    animation-name: pulseColor;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+}
+
+.zawa-branding.offline > img {
+    filter: grayscale(70%);
+}
+
+@keyframes flip {
+    0% { opacity: 0 }
+    20% { transform: rotateY(180deg) rotateX(270deg); opacity: 0 }
+    100% { transform: rotateY(720deg) rotateX(360deg) }
+}
+
+@keyframes pulseColor {
+    0% { filter: grayscale(0%);}
+    30% { filter: grayscale(70%);}
+    70% { filter: grayscale(70%);}
+    100% { filter: grayscale(0%);}
+}
 </style>

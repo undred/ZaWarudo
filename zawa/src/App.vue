@@ -3,21 +3,26 @@
     <l-map :zoom="zoom" :center="center">
       <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
       <l-marker
+        
         v-for="marker in events"
         :key="marker.id"
         :visible="marker.visible"
         :draggable="marker.draggable"
         :lat-lng.sync="marker.position"
         :icon="marker.icon"
-        @click="alert(marker)"
+        @click="alert(marker.title, marker.desc)"
       >
-        <l-popup :content="marker.tooltip" />
+        <l-popup>
+          <div @click="innerClick">
+            
+          </div>
+        </l-popup>
         <l-tooltip :content="marker.tooltip" />
       </l-marker>
     </l-map>
     <modal @cancel="modalOpen=false"  @ok="addMarker(eventTitle, eventTag, eventDescription); modalOpen=false" v-if="modalOpen">
       <template v-slot:header>
-        <h3>Add Event</h3>
+        <h3>Create Event</h3>
       </template>
       Title:<br> <input v-model="eventTitle"><br>
       Tag:<br> <input v-model="eventTag"><br>
@@ -31,13 +36,13 @@
     <Sidebar>
       <ul class="sidebar-panel-nav">
         <li>
-          <a href="#home" @click="addMarker">Create Event</a>
+          <a href="#about" @click="modalOpen=true">Create Event</a>
         </li>
         <li>
-          <a href="#about" @click="modalOpen=true">About</a>
+          <a href="#contact">Remove Event</a>
         </li>
         <li>
-          <a href="#contact">Contact</a>
+          <a href="#contact">Edit Event</a>
         </li>
       </ul>
     </Sidebar>
@@ -49,11 +54,11 @@ import Burger from "./components/Menu/Burger";
 import Sidebar from "./components/Menu/Sidebar";
 import Modal from "./components/Modal.vue"
 import { latLng } from "leaflet";
-import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
+import { LMap, LTileLayer, LMarker, LPopup} from "vue2-leaflet";
 
 export default {
   name: "app",
-  components: { LMap, LTileLayer, LMarker, Burger, Sidebar, Modal },
+  components: { LMap, LTileLayer, LMarker, LPopup, Burger, Sidebar, Modal},
   data() {
     return {
       zoom:40,
@@ -64,24 +69,29 @@ export default {
       modalOpen: false,
       eventTitle: "",
       eventTag: "",
-      eventDescription: "",
+      eventDescription: ""
     }
   },
   methods: {
-    alert(msg) {
-      alert(msg);
+    alert(title, desc) {
+      alert(title + "\n" + desc);
     },
     addMarker(eventTitle, eventTag, eventDescription) {
       const newMarker = {
         position: { lat: 38.73743, lng: -9.3032147},
         draggable: true,
         visible: true,
-        tooltip: eventTitle,
+        title: eventTitle,
+        desc: eventDescription,
+        tag: eventTag
       };
       this.events.push(newMarker);
     },
     editMarker() {
       this.events.push(newMarker);
+    },
+    innerClick() {
+      alert("Click!");
     }
 }
 }

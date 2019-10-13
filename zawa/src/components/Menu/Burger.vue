@@ -77,7 +77,7 @@
 
     .burger-bar--2 {
         transform-origin: 100% 50%;
-        transform: scaleX(.8);
+        /* transform: scaleX(.8); */
     }
 
     .burger-button:hover .burger-bar--2 {

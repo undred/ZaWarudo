@@ -12,7 +12,7 @@
         :visible="marker.visible"
         :draggable="marker.isNew"
         :lat-lng.sync="marker.position"
-        :icon="marker.icon"
+        :icon="marker.iconobj"
       >
         <l-popup>
           <div @click="innerClick">
@@ -28,7 +28,7 @@
       <template v-slot:header>
         <h3>Create Event</h3>
       </template>
-      <EventForm v-model:event="newEvent"></EventForm>
+      <EventForm v-model:event="newEvent" :icons="icons"></EventForm>
     </modal>
     <!--  <nav class="main-nav"> -->
 
@@ -56,12 +56,12 @@ import Burger from "./components/Menu/Burger";
 import Sidebar from "./components/Menu/Sidebar";
 import Modal from "./components/Modal.vue";
 import EventForm from "./components/EventForm.vue";
-import { latLng } from "leaflet";
-import { LMap, LTileLayer, LMarker, LPopup, LControl} from "vue2-leaflet";
+import { latLng, icon } from "leaflet";
+import { LMap, LTileLayer, LMarker, LPopup, LControl, LTooltip} from "vue2-leaflet";
 
 export default {
   name: "app",
-  components: { LMap, LTileLayer, LMarker, LPopup, LControl, Burger, Sidebar, Modal, EventForm},
+  components: { LMap, LTileLayer, LMarker, LPopup, LControl, LTooltip, Burger, Sidebar, Modal, EventForm},
   data() {
     return {
       zoom:40,
@@ -71,7 +71,7 @@ export default {
       events : [],
       modalOpen: false,
       newEvent: {title: "", tag:"", desc:""},
-
+	icons: [{name: "aeist", path: require("@/assets/aeist.png")}, {name: "n3e", path: require("@/assets/n3e.png")}, {name: "queer", path: require("@/assets/queer.png")}]
     }
   },
   methods: {
@@ -82,10 +82,13 @@ export default {
       const newMarker = {
         position: this.center,
         visible: true,
-        isNew: true,
+          isNew: true,
+	  icon: newEvent.icon,
+	  iconobj: icon({iconUrl: newEvent.icon.path, iconSize: [48, 48], iconAnchor: [24, 24]}),
         title: newEvent.title,
         desc: newEvent.desc,
-        tag: newEvent.tag
+          tag: newEvent.tag,
+	  tooltip: newEvent.title
       };
 	for(var marker of this.events) {
 	    marker.isNew = false;

@@ -16,9 +16,9 @@
       >
         <l-popup >
           <div>
-            <h2>{{ marker.title }}</h2>
-	    Tags: {{ marker.tag }}<br>
-	    Description: <span style="white-space: pre-line;"> {{marker.desc}} </span>
+            <h4>{{ marker.title }}</h4>
+	    <b>Tags:</b> {{ marker.tag }}<br>
+	    <b>Description</b><br> <span style="white-space: pre-line;"> {{marker.desc}} </span>
 	    <br>
 	    <button @click="killev(marker)">Remove</button>
 	    <button @click="">Join</button>
@@ -73,8 +73,8 @@ export default {
       attribution:'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       events : [],
       modalOpen: false,
-      newEvent: {title: "", tag:"", desc:"", icon: {name: "aeist", path: require("@/assets/aeist.png")}},
-	icons: [{name: "aeist", path: require("@/assets/aeist.png")}, {name: "n3e", path: require("@/assets/n3e.png")}, {name: "queer", path: require("@/assets/queer.png")}]
+      newEvent: {title: "", tag:"", desc:"", icon: {name: "default", path: require("@/assets/default.png")}},
+	icons: [{name: "default", path: require("@/assets/default.png")},{name: "sports", path: require("@/assets/sports.png")},{name: "aeist", path: require("@/assets/aeist.png")}, {name: "n3e", path: require("@/assets/n3e.png")}, {name: "queer", path: require("@/assets/queer.png")}]
     }
   },
     methods: {

@@ -18,7 +18,7 @@ export default {
     name: "EventForm",
     props: { value: { default: {title: "myTitle", tag: "myTag", desc: "myDesc"}},
 	     icons: { default: [{name: "queer", path: "@/assets/queer.png"}]}} ,
-    data() {return { iconpath: require("@/assets/aeist.png") }},
+    data() {return { iconpath: require("@/assets/default.png") }},
     methods: {
 	update() {
 	    this.$emit('input', this.value);

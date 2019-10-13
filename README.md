@@ -8,7 +8,7 @@ Run server:
 
 cd ZaWarudo/server
 
-python manage.py migrate
+python manage.py runserver
 
 Run shell
 

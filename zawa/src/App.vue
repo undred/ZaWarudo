@@ -14,17 +14,20 @@
         :lat-lng.sync="marker.position"
         :icon="marker.iconobj"
       >
-        <l-popup>
-          <div @click="innerClick">
+        <l-popup >
+          <div>
             <h2>{{ marker.title }}</h2>
 	    Tags: {{ marker.tag }}<br>
 	    Description: <span style="white-space: pre-line;"> {{marker.desc}} </span>
+	    <br>
+	    <button @click="killev(marker)">Remove</button>
+	    <button @click="">Join</button>
           </div>
         </l-popup>
         <l-tooltip :content="marker.tooltip" />
       </l-marker>
     </l-map>
-    <modal @cancel="modalOpen=false"  @ok="addMarker(newEvent); newEvent={}; modalOpen=false" v-if="modalOpen">
+    <modal @cancel="modalOpen=false"  @ok="addMarker(newEvent); newEvent={icon: icons[0]}; modalOpen=false" v-if="modalOpen">
       <template v-slot:header>
         <h3>Create Event</h3>
       </template>
@@ -70,14 +73,17 @@ export default {
       attribution:'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
       events : [],
       modalOpen: false,
-      newEvent: {title: "", tag:"", desc:""},
+      newEvent: {title: "", tag:"", desc:"", icon: {name: "aeist", path: require("@/assets/aeist.png")}},
 	icons: [{name: "aeist", path: require("@/assets/aeist.png")}, {name: "n3e", path: require("@/assets/n3e.png")}, {name: "queer", path: require("@/assets/queer.png")}]
     }
   },
-  methods: {
-    alert(title, desc) {
-      alert(title + "\n" + desc);
-    },
+    methods: {
+	killev(event){
+	    this.$delete(this.events, this.events.indexOf(event))
+	},
+	alert(title, desc) {
+	    alert(title + "\n" + desc);
+	},
     addMarker(newEvent) {
       const newMarker = {
         position: this.center,
